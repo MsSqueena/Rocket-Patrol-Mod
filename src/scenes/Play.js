@@ -5,17 +5,17 @@ class Play extends Phaser.Scene {
 
     preload() {
         //load images/tile sprites
-        this.load.image('rocket', './assets/rocket.png');
-        this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('Ball', './assets/Ball.png');
+        this.load.image('sheepBrown', './assets/sheepBrown.png');
+        this.load.image('mainBackground', './assets/mainBackground.png');
 
         //load spritesheet
-        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('BrownAnim', './assets/BrownAnim.png', {frameWidth: 404, frameHeight: 285, startFrame: 0, endFrame: 2});
     }
 
     create() {
         //place tile sprite
-        this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0,0);
+        this.mainBackground = this.add.tileSprite(0, 0, 1920, 1080, 'mainBackground').setOrigin(0,0);
 
         //green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00ff00).setOrigin(0, 0);
@@ -27,12 +27,12 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
 
         //add rocket (p1)
-        this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - (borderUISize * 1.5), 'rocket').setOrigin(0.5, 0);
+        this.p1Ball = new Ball(this, game.config.width/2, game.config.height - (borderUISize * 1.5), 'Ball').setOrigin(0.5, 0);
 
         //add spaceships (x3)
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0,0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+        this.sheep01 = new Sheeps(this, game.config.width + borderUISize*6, borderUISize*4, 'sheepBrown', 0, 30).setOrigin(0,0);
+        this.sheep02 = new Sheeps(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'sheepBrown', 0, 20).setOrigin(0,0);
+        this.sheep03 = new Sheeps(this, game.config.width, borderUISize*6 + borderPadding*4, 'sheepBrown', 0, 10).setOrigin(0,0);
 
         //define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -42,9 +42,9 @@ class Play extends Phaser.Scene {
 
         // animation config
         this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {start:0, end: 9, first:0}),
-            frameRate: 30
+            key: 'BrownAnim',
+            frames: this.anims.generateFrameNumbers('BrownAnim', {start:0, end: 2, first:0}),
+            frameRate: 10
         });
 
         //initalize Score
@@ -86,58 +86,58 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.starfield.tilePositionX -= 4;
-        this.p1Rocket.update();
+        this.mainBackground.tilePositionX -= 4;
+        this.p1Ball.update();
 
         //update spaceships (x3)
         if (!this.gameOver){
-            this.p1Rocket.update();         //update rocket sprite
-            this.ship01.update();           //update spaceships (x3)
-            this.ship02.update();
-            this.ship03.update();
+            this.p1Ball.update();         //update rocket sprite
+            this.sheep01.update();           //update spaceships (x3)
+            this.sheep02.update();
+            this.sheep03.update();
         }
 
         //check collisions
-        if (this.checkCollision(this.p1Rocket, this.ship03)){
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship03);
+        if (this.checkCollision(this.p1Ball, this.sheep03)){
+            this.p1Ball.reset();
+            this.shipExplode(this.sheep03);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship02)){
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship02);
+        if (this.checkCollision(this.p1Ball, this.sheep02)){
+            this.p1Ball.reset();
+            this.shipExplode(this.sheep02);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship01)){
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship01);
+        if (this.checkCollision(this.p1Ball, this.sheep01)){
+            this.p1Ball.reset();
+            this.shipExplode(this.sheep01);
         }
     }
 
-    checkCollision(rocket,ship){
+    checkCollision(ball,sheep){
         //simple AABB(Axis-Aligned Bounding Boxes) checking
-        if (rocket.x < ship.x + ship.width && rocket.x + rocket.width > ship.x && rocket.y < ship.y + ship.height && rocket.height + rocket.y > ship.y) {
+        if (ball.x < sheep.x + sheep.width && ball.x + ball.width > sheep.x && ball.y < sheep.y + sheep.height && ball.height + ball.y > sheep.y) {
                 return true;
         } else {
             return false;
         }
     }
 
-    shipExplode(ship) {
+    shipExplode(sheep) {
         // temporarily hide ship
-        ship.alpha = 0;
+        sheep.alpha = 0;
 
         // create explosion sprite at ship's position
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0,0);
-        boom.anims.play('explode');                         // play explode animation
+        let boom = this.add.sprite(sheep.x, sheep.y, 'BrownAnim').setOrigin(0,0);
+        boom.anims.play('BrownAnim');                         // play explode animation
         boom.on('animationcomplete', () => {                // callback after anim completes
-            ship.reset();                                   // reset ship position
-            ship.alpha = 1;                                 // make ship visble again
+            sheep.reset();                                   // reset ship position
+            sheep.alpha = 1;                                 // make ship visble again
             boom.destroy();                                 // remove explosion sprite
         });
 
         //score add and repaint
-        this.p1Score += ship.points;
+        this.p1Score += sheep.points;
         this.scoreLeft.text = this.p1Score;
 
-        this.sound.play('sfx_explosion');
+        this.sound.play('points');
     }
 }
