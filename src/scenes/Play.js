@@ -224,7 +224,7 @@ class Play extends Phaser.Scene {
         goat.destroy();
 
         //score add and repaint
-        this.p1Score += goat.points;
+        this.p1Score += goat.points + 50;
         this.scoreLeft.text = this.p1Score;
 
         this.sound.play('points');
